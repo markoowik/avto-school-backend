@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URI)
      .catch(err => console.log(err));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/courses", courseRoutes);
+app.use("/courses", courseRoutes);
 app.use("/api/applications", applicationRoutes);
 
 
