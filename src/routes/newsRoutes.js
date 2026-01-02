@@ -4,6 +4,15 @@ import {upload} from "../middleware/upload.js";
 
 const router = express.Router();
 
+
+router.get("/", async (req, res) => {
+    try {
+        const news = await News.find().sort({ createdAt: -1 });
+        res.json(news);
+    } catch (err) {
+        res.status(500).json({ message: "Ошибка при получении новостей" });
+    }
+});
 router.post("/addnews", upload.single("image"),  async (req, res) => {
     try{
         const { title, description } = req.body;
