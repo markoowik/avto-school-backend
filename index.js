@@ -25,6 +25,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/news", newsRoutes);
+app.use("/uploads", express.static("uploads"));
+
 
 
 app.listen(PORT, () => {
