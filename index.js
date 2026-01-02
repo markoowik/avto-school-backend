@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 5000;
 import authRoutes from "./src/routes/auth.js";
 import courseRoutes from "./src/routes/courseRoutes.js";
 import applicationRoutes from "./src/routes/applicationRoutes.js";
+import newsRoutes from "./src/routes/newsRoutes.js"
 
 
 const app = express();
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/api/news", newsRoutes);
 
 
 app.listen(PORT, () => {
