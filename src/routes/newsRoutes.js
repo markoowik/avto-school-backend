@@ -1,6 +1,6 @@
 import express from 'express';
 import News from "../models/News.js";
-import {upload} from "../middleware/upload.js";
+import parser from "../middleware/upload.js";
 
 
 
@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
         res.status(500).json({ message: "Ошибка при получении новостей" });
     }
 });
-router.post("/addnews", upload.single("image"),  async (req, res) => {
+router.post("/addnews", parser.single("image"),  async (req, res) => {
     try{
         const { title, description } = req.body;
 
