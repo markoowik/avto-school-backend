@@ -2,6 +2,7 @@ import express from 'express';
 import News from "../models/News.js";
 import {upload} from "../middleware/upload.js";
 
+
 const router = express.Router();
 
 
@@ -17,9 +18,7 @@ router.post("/addnews", upload.single("image"),  async (req, res) => {
     try{
         const { title, description } = req.body;
 
-        const image = req.file
-            ? `/uploads/${req.file.filename}`
-            : "";
+        const image = req.file ? req.file.path : "";
 
         const news = new News({ title, description, image });
 
