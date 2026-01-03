@@ -19,14 +19,14 @@ router.post("/addnews", parser.single("image"),  async (req, res) => {
     try{
         const { title, description } = req.body;
 
-        const image = req.file
+        const imagePath = req.file
             ? `/uploads/${req.file.filename}`
-            : "";
+            : '';
 
         const news = new News({
-            title: req.body.title,
-            description: req.body.description,
-            image: `/uploads/${req.file.filename}`,
+            title,
+            description,
+            image: imagePath,
         });
 
         await news.save()
