@@ -17,18 +17,29 @@ router.get('/', async (req, res) => {
         });
     }
 });
+router.get("/:id", async (req, res) => {
+    try {
+        const news = await News.findById(req.params.id);
 
+        if (!news) {
+            return res.status(404).json({ message: "Новость не найдена" });
+        }
+
+        res.json(news);
+    } catch (e) {
+        res.status(500).json({ message: "Ошибка сервера" });
+    }
+});
 // POST: создать новость
 router.post("/addnews", upload.single("image"), async (req, res) => {
         try {
             const { title, description } = req.body;
 
-            const image = req.file ? req.file.path : null;
+            // const image = req.file ? req.file.path : null;
 
             const news = await News.create({
                 title,
                 description,
-                image,
             });
 
             res.status(201).json(news);
