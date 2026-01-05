@@ -1,17 +1,12 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const newsSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
+const newsSchema = new mongoose.Schema(
+    {
+        title: { type: String, required: true },
+        description: String,
+        image: String,
     },
-    description: {
-        type: String,
-    },
-    image: {
-        type: String,
-        default: '',
-    }
-})
+    { timestamps: true }
+);
 
-export default mongoose.model('News', newsSchema);
+export default mongoose.model("News", newsSchema);

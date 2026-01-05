@@ -1,39 +1,43 @@
 import express from 'express';
-import News from "../models/News.js";
-import parser from "../middleware/upload.js";
-
-
+import News from '../models/News.js';
+import {upload} from '../middleware/upload.js';
 
 const router = express.Router();
 
-
-router.get("/", async (req, res) => {
+// GET: получить все новости
+router.get('/', async (req, res) => {
     try {
         const news = await News.find().sort({ createdAt: -1 });
         res.json(news);
     } catch (err) {
-        res.status(500).json({ message: "Ошибка при получении новостей" });
+        console.error('Error fetching news:', err);
+        res.status(500).json({
+            message: 'Ошибка при получении новостей',
+            error: err.message
+        });
     }
 });
-router.post("/addnews", parser.single("image"),  async (req, res) => {
-    try{
-        const { title, description } = req.body;
 
-        const imagePath = req.file
-            ? `/uploads/${req.file.filename}`
-            : '';
+// POST: создать новость
+router.post("/addnews", upload.single("image"), async (req, res) => {
+        try {
+            const { title, description } = req.body;
 
-        const news = new News({
-            title,
-            description,
-            image: imagePath,
-        });
+            const image = req.file ? req.file.path : null;
 
-        await news.save()
-        res.status(201).json(news);
-    } catch(err){
-        res.status(500).json({ message: "Ошибка при создании новости" });
+            const news = await News.create({
+                title,
+                description,
+                image,
+            });
+
+            res.status(201).json(news);
+        } catch (error) {
+            console.error("ADD NEWS ERROR:", error);
+            res.status(500).json({ message: "Server error" });
+        }
     }
-})
+);
+
 
 export default router;

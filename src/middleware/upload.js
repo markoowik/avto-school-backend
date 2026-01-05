@@ -1,26 +1,23 @@
-import multer from "multer";
-import path from "path";
+import cloudinary from "cloudinary";
 
-// Настройка хранилища
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "./uploads"); // папка на сервере
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + "-" + file.originalname);
+import CloudinaryStorage  from "multer-storage-cloudinary";
+
+const { v2 } = cloudinary;
+
+import multer from "multer";
+
+v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: "news",
+        allowed_formats: ["jpg", "jpeg", "png"],
     },
 });
 
-// Фильтр по типу файла (необязательно)
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(new Error("Только изображения jpg, jpeg, png"), false);
-    }
-};
-
-const parser = multer({ storage, fileFilter });
-
-export default parser;
+export const upload = multer({ storage });
