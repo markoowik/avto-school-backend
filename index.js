@@ -12,6 +12,7 @@ import authRoutes from "./src/routes/auth.js";
 import courseRoutes from "./src/routes/courseRoutes.js";
 import applicationRoutes from "./src/routes/applicationRoutes.js";
 import newsRoutes from "./src/routes/newsRoutes.js"
+import adminRoutes from "./src/routes/admin.js"
 
 
 
@@ -34,6 +35,8 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/news", newsRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/api/payment", paymentRoutes);
+app.use("/api/admin", adminRoutes)
 
 
 

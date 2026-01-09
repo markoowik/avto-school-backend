@@ -33,4 +33,26 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.post("/buy", async (req, res) => {
+    const { userId, courseId } = req.body;
+
+    const user = await User.findById(userId);
+    const course = await Course.findById(courseId);
+
+    if (!user || !course)
+        return res.status(404).json({ message: "Not found" });
+
+    if (user.balance < course.price)
+        return res.status(400).json({ message: "Not enough balance" });
+
+    if (user.courses.includes(courseId))
+        return res.status(400).json({ message: "Already bought" });
+
+    user.balance -= course.price;
+    user.courses.push(course._id);
+    await user.save();
+
+    res.json({ message: "Course purchased" });
+});
+
 export default router;
