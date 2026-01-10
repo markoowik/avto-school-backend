@@ -9,23 +9,23 @@ import jwt from "jsonwebtoken";
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-    const { name, password} = req.body;
+    const { name, password, role} = req.body;
 
     const candidate = await Admin.findOne({name});
 
     if(candidate) return res.status(400).json({message: "Администратор с таким никнейм уже есть!"});
 
     const hash = await bcrypt.hash(req.body.password, 10);
-    const admin = new Admin({name, password: hash});
+    const admin = new Admin({name, password: hash, role: "admin"});
 
     await admin.save();
     res.json({message: "Вы успешно создали админ-аккаунт!"})
 })
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    const adminUser = await Admin.findOne({name});
+    const adminUser = await Admin.findOne({username});
     if(!adminUser) return res.status(400).json({message: "С таким никнейм уже есть!"});
 
     const isMatch = await bcrypt.compare(password, adminUser.password);
