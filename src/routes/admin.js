@@ -23,9 +23,9 @@ router.post("/register", async (req, res) => {
 })
 
 router.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+    const { name, password } = req.body;
 
-    const adminUser = await Admin.findOne({username});
+    const adminUser = await Admin.findOne({name});
     if(!adminUser) return res.status(400).json({message: "С таким никнейм уже есть!"});
 
     const isMatch = await bcrypt.compare(password, adminUser.password);
