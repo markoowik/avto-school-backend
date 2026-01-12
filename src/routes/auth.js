@@ -31,7 +31,7 @@ router.post("/register", async (req, res) => {
     if (candidate) return res.status(400).json({ message: "Пользователь с таким email уже существует"});
 
     const hash = await bcrypt.hash(password, 10);
-    const user = new User({ username, surname, email, password: hash });
+    const user = new User({ username, surname, email, password: hash, role: "student" });
 
     await user.save();
     res.json({ message: "User created successfully" });
@@ -46,7 +46,14 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Wrong password" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h"});
+    const token = jwt.sign(
+        {
+            id: user._id,
+            role: user.role,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+    );
     res.json({ token });
 });
 

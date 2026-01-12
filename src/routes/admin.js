@@ -6,6 +6,7 @@ import {Admin} from "../models/Admin.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/authMiddleware.js";
+import {adminOnly} from "../middleware/adminOnly.js";
 
 const router = express.Router();
 
@@ -53,7 +54,19 @@ router.post("/login", async (req, res) => {
     res.json({token: token});
 
 })
+router.post("/create-user", authMiddleware, adminOnly, async (req, res) => {
+    const { email, password, role } = req.body;
 
+    const hashed = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+        email,
+        password: hashed,
+        role, // admin | student
+    });
+
+    res.json(user);
+});
 router.post("/add-balance", async (req, res) => {
     const { userId, amount } = req.body;
 

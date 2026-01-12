@@ -13,8 +13,9 @@ const userSchema = new mongoose.Schema({
     courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
     role: {
         type: String,
-        default: "student"
-    }
+        enum: ["student", "admin"],
+        default: "student",
+    },
 });
 
 export default mongoose.model("User", userSchema);
