@@ -5,8 +5,26 @@ import User from "../models/User.js";
 import {Admin} from "../models/Admin.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+
+
+router.get("/me", authMiddleware, async (req, res) => {
+    try {
+        const admin = await Admin.findById(req.admin.id); // req.user приходит из authMiddleware
+        if (!admin) return res.status(404).json({ message: "Пользователь не найден" });
+
+        // Вот сюда вставляем
+        res.json({
+            _id: admin._id,
+            name: admin.name,
+            role: admin.role,
+        });
+    } catch (err) {
+        res.status(500).json({ message: "Ошибка сервера" });
+    }
+});
 
 router.post("/register", async (req, res) => {
     const { name, password, role} = req.body;
