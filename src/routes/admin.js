@@ -5,7 +5,7 @@ import User from "../models/User.js";
 import {Admin} from "../models/Admin.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import authMiddleware from "../middleware/authMiddleware.js";
+import {authMiddleware} from "../middleware/authMiddleware.js";
 import {adminOnly} from "../middleware/adminOnly.js";
 import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js"
 import { Role } from "../models/Role.js";
