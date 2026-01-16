@@ -15,19 +15,25 @@ const router = express.Router();
 
 router.get("/me", authMiddleware, async (req, res) => {
     try {
-        const admin = await Admin.findById(req.admin.id); // req.user приходит из authMiddleware
-        if (!admin) return res.status(404).json({ message: "Пользователь не найден" });
+        const admin = await Admin
+            .findById(req.admin.id)
+            .populate("role"); // 🔥 ВОТ ЭТО ГЛАВНОЕ
 
-        // Вот сюда вставляем
+        if (!admin) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+
         res.json({
             _id: admin._id,
             name: admin.name,
-            role: admin.role,
+            role: admin.role.name, // 🔥 возвращаем строку
         });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "Ошибка сервера" });
     }
 });
+
 
 
 
