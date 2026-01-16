@@ -7,7 +7,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/authMiddleware.js";
 import {adminOnly} from "../middleware/adminOnly.js";
-import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js";
+import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js"
+import { Role } from "../models/Role.js";
 
 const router = express.Router();
 
