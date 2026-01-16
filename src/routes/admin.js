@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/authMiddleware.js";
 import {adminOnly} from "../middleware/adminOnly.js";
+import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js";
 
 const router = express.Router();
 
@@ -27,34 +28,75 @@ router.get("/me", authMiddleware, async (req, res) => {
     }
 });
 
-router.post("/register", async (req, res) => {
-    const { name, password, role} = req.body;
 
-    const candidate = await Admin.findOne({name});
-
-    if(candidate) return res.status(400).json({message: "Администратор с таким никнейм уже есть!"});
-
-    const hash = await bcrypt.hash(req.body.password, 10);
-    const admin = new Admin({name, password: hash, role: "admin"});
-
-    await admin.save();
-    res.json({message: "Вы успешно создали админ-аккаунт!"})
-})
 
 router.post("/login", async (req, res) => {
-    const { name, password } = req.body;
+    try {
+        const { name, password } = req.body;
 
-    const adminUser = await Admin.findOne({name});
-    if(!adminUser) return res.status(400).json({message: "С таким никнейм уже есть!"});
+        const admin = await Admin.findOne({ name }).populate("role");
+        if (!admin) {
+            return res.status(401).json({ message: "Неверный логин или пароль" });
+        }
 
-    const isMatch = await bcrypt.compare(password, adminUser.password);
-    if (!isMatch) res.status(400).json({message: "Неправильный пароль"});
+        const isMatch = await bcrypt.compare(password, admin.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Неверный логин или пароль" });
+        }
 
-    const token = jwt.sign({id: adminUser._id}, process.env.JWT_SECRET, {expiresIn: "1h"});
-    res.json({token: token});
+        const token = jwt.sign(
+            { id: admin._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
-})
-router.post("/create-user", authMiddleware, adminOnly, async (req, res) => {
+        res.json({
+            token,
+            admin: {
+                id: admin._id,
+                name: admin.name,
+                role: admin.role.name,
+            },
+        });
+    } catch (e) {
+        res.status(500).json({ message: "Ошибка сервера" });
+    }
+});
+router.post("/create-first-admin", async (req, res) => {
+    try {
+        const { name, password } = req.body;
+
+        // 1. Проверка
+        const exists = await Admin.findOne({ name });
+        if (exists) {
+            return res.status(400).json({ message: "Админ уже существует" });
+        }
+
+        // 2. Берём роль admin
+        const adminRole = await Role.findOne({ name: "admin" });
+        if (!adminRole) {
+            return res.status(500).json({ message: "Роль admin не найдена" });
+        }
+
+        // 3. Хешируем пароль
+        const hash = await bcrypt.hash(password, 10);
+
+        // 4. Создаём админа
+        const admin = new Admin({
+            name,
+            password: hash,
+            role: adminRole._id,
+        });
+
+        await admin.save();
+
+        res.json({ message: "Админ создан" });
+    } catch (e) {
+        res.status(500).json({ message: "Ошибка сервера" });
+    }
+});
+
+router.post("/create-user", checkAdminAuth(["admin"]), adminOnly, async (req, res) => {
     const { email, password, role } = req.body;
 
     const hashed = await bcrypt.hash(password, 10);

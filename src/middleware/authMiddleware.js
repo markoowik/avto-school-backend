@@ -20,6 +20,7 @@ export default async function authMiddleware(req, res, next) {
         }
 
         req.user = user;
+        req.admin = decoded;
         next();
     } catch (e) {
         return res.status(401).json({ message: "Неверный токен" });
