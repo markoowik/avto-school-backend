@@ -9,11 +9,12 @@ import {authMiddleware} from "../middleware/authMiddleware.js";
 import {adminOnly} from "../middleware/adminOnly.js";
 import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js"
 import { Role } from "../models/Role.js";
+import authAdminMiddleware from "../middleware/authAdminMiddleware.js";
 
 const router = express.Router();
 
 
-router.get("/me", authMiddleware, async (req, res) => {
+router.get("/me", authAdminMiddleware(), async (req, res) => {
     try {
         const admin = await Admin
             .findById(req.admin.id)
