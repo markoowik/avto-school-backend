@@ -14,6 +14,7 @@ export const authMiddleware = (req, res, next) => {
         req.user = {
             id: decoded.id,   // 🔴 ВАЖНО
         };
+        req.admin = decoded;
 
         next();
     } catch (e) {
