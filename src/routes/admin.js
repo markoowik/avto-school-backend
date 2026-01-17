@@ -14,10 +14,10 @@ import {authAdminMiddleware} from "../middleware/authAdminMiddleware.js";
 const router = express.Router();
 
 
-router.get("/me", authAdminMiddleware, async (req, res, next) => {
+router.get("/me", authAdminMiddleware(), async (req, res) => {
     try {
         const adminId = req.admin?.id;
-        if (!adminId) return res.status(401).json({ message: "Нет админа" });
+        if (!adminId) return res.status(401).json({ message: "Нет токена" });
 
         const admin = await Admin.findById(adminId).populate("role");
         if (!admin) return res.status(404).json({ message: "Пользователь не найден" });
@@ -28,10 +28,11 @@ router.get("/me", authAdminMiddleware, async (req, res, next) => {
             role: admin.role?.name || "admin",
         });
     } catch (err) {
-        console.error(err);
-        next(err);
+        console.error("GET /me error:", err);
+        res.status(500).json({ message: "Ошибка сервера" });
     }
 });
+
 
 
 
