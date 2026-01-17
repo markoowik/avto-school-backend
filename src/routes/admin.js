@@ -1,11 +1,11 @@
 // routes/admin.js
 import express from "express";
 
+
 import User from "../models/User.js";
 import {Admin} from "../models/Admin.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import {authMiddleware} from "../middleware/authMiddleware.js";
+import jwt from "jsonwebtoken";;
 import {adminOnly} from "../middleware/adminOnly.js";
 import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js"
 import { Role } from "../models/Role.js";
@@ -14,12 +14,14 @@ import authAdminMiddleware from "../middleware/authAdminMiddleware.js";
 const router = express.Router();
 
 
-router.get("/me", authAdminMiddleware(), async (req, res) => {
+router.get("/me", authAdminMiddleware, async (req, res, next) => {
     try {
-        const admin = await Admin
-            .findById(req.admin.id)
-            .populate("role"); // 🔥 ВОТ ЭТО ГЛАВНОЕ
+        const adminId = req.admin?.id;
+        if (!adminId) {
+            return res.status(401).json({ message: "Нет админа" });
+        }
 
+        const admin = await Admin.findById(adminId).populate("role");
         if (!admin) {
             return res.status(404).json({ message: "Пользователь не найден" });
         }
@@ -27,11 +29,11 @@ router.get("/me", authAdminMiddleware(), async (req, res) => {
         res.json({
             _id: admin._id,
             name: admin.name,
-            role: admin.role.name, // 🔥 возвращаем строку
+            role: admin.role?.name || "admin",
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Ошибка сервера" });
+        console.error("GET /me error:", err);
+        next(err);
     }
 });
 
