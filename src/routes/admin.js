@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";;
 import {adminOnly} from "../middleware/adminOnly.js";
 import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js"
 import { Role } from "../models/Role.js";
-import authAdminMiddleware from "../middleware/authAdminMiddleware.js";
+import {authAdminMiddleware} from "../middleware/authAdminMiddleware.js";
 
 const router = express.Router();
 

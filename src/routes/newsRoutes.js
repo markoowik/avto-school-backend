@@ -2,7 +2,7 @@ import express from 'express';
 import News from '../models/News.js';
 import {upload} from '../middleware/upload.js';
 import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js";
-import authAdminMiddleware from "../middleware/authAdminMiddleware.js";
+import {authAdminMiddleware} from "../middleware/authAdminMiddleware.js";
 
 const router = express.Router();
 
@@ -35,7 +35,7 @@ router.get("/:id", async (req, res) => {
 // POST: создать новость
 router.post(
     "/addnews",
-    authAdminMiddleware(["admin"]),
+    authAdminMiddleware("admin"),
     upload.single("image"),
     async (req, res) => {
         try {
