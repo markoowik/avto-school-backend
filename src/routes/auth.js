@@ -7,7 +7,7 @@ import {authMiddleware} from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 
-router.get("/me", authMiddleware(), async (req, res) => {
+router.get("/me", authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user.id); // req.user приходит из authMiddleware
         if (!user) return res.status(404).json({ message: "Пользователь не найден" });
@@ -19,6 +19,7 @@ router.get("/me", authMiddleware(), async (req, res) => {
             surname: user.surname, // теперь отправляем фамилию
             email: user.email
         });
+        console.log("REQ.USER:", req.user);
     } catch (err) {
         res.status(500).json({ message: "Ошибка сервера" });
     }

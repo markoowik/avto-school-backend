@@ -1,27 +1,33 @@
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
 
-export const authMiddleware = () => {
-    return async (req, res, next) => {
-        try {
-            const authHeader = req.headers.authorization;
-            if (!authHeader || !authHeader.startsWith("Bearer ")) {
-                return res.status(401).json({ message: "Нет токена" });
-            }
+const authMiddleware = (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
 
-            const token = authHeader.split(" ")[1];
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            // @ts-ignore
-            req.user = decoded; // id + role
-
-            const user = await User.findById(req.user.id);
-            if (!user) return res.status(404).json({ message: "Пользователь не найден" });
-
-            next();
-        } catch (err) {
-            console.error("AUTH ERROR:", err);
-            return res.status(401).json({ message: "Неверный токен" });
+        if (!authHeader) {
+            return res.status(401).json({ message: "Нет токена" });
         }
-    };
+
+        const token = authHeader.split(" ")[1]; // Bearer TOKEN
+
+        if (!token) {
+            return res.status(401).json({ message: "Токен не найден" });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // ВАЖНО: decoded ДОЛЖЕН содержать id
+        // { id: user._id }
+
+        req.user = {
+            id: decoded.id,
+        };
+        console.log("DECODED:", decoded);
+
+        next();
+    } catch (e) {
+        return res.status(401).json({ message: "Невалидный токен" });
+    }
 };
+
+export default authMiddleware;
