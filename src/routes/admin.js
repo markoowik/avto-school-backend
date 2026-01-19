@@ -5,7 +5,7 @@ import express from "express";
 import User from "../models/User.js";
 import {Admin} from "../models/Admin.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";;
+import jwt from "jsonwebtoken";
 import {adminOnly} from "../middleware/adminOnly.js";
 import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js"
 import { Role } from "../models/Role.js";
