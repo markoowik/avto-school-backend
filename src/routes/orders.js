@@ -13,7 +13,7 @@ const checkAdmin = (req, res, next) => {
     next();
 };
 
-router.get("/", authMiddleware, checkAdmin, async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
     const orders = await Order.find()
         .populate("userId", "name surname email")
         .populate("courseId", "title price")
@@ -55,7 +55,7 @@ router.post("/create-order", authMiddleware, async (req, res) => {
     }
 });
 
-router.patch("/:id/pay", authMiddleware, checkAdmin, async (req, res) => {
+router.patch("/:id/pay", authMiddleware, async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: "Заказ не найден" });
 

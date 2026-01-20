@@ -130,19 +130,19 @@ router.post("/add-balance", async (req, res) => {
 });
 
 
-router.patch("/:id/pay", async (req, res) => {
-    const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Заказ не найден" });
-
-    order.status = "paid";
-    await order.save();
-
-    await User.findByIdAndUpdate(order.userId, {
-        $addToSet: { purchasedCourses: order.courseId },
-    });
-
-    res.json({ message: "Оплата подтверждена" });
-});
+// router.patch("/:id/pay", async (req, res) => {
+//     const order = await Order.findById(req.params.id);
+//     if (!order) return res.status(404).json({ message: "Заказ не найден" });
+//
+//     order.status = "paid";
+//     await order.save();
+//
+//     await User.findByIdAndUpdate(order.userId, {
+//         $addToSet: { purchasedCourses: order.courseId },
+//     });
+//
+//     res.json({ message: "Оплата подтверждена" });
+// });
 
 
 export default router;
