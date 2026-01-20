@@ -7,7 +7,9 @@ const router = express.Router();
 const checkAdmin = (req, res, next) => {
     if (req.user.role !== "admin") {
         return res.status(403).json({ message: "Нет доступа" });
+
     }
+    console.log("CHECK ADMIN ROLE:", req.user.role);
     next();
 };
 
