@@ -33,7 +33,25 @@ router.get("/", authMiddleware, checkAdmin, async (req, res) => {
 //         res.status(500).json({ message: "Ошибка создания заказа" });
 //     }
 // });
+router.post("/create-order", authMiddleware, async (req, res) => {
+    try {
+        const { courseId } = req.body;
 
+        if (!courseId) {
+            return res.status(400).json({ message: "courseId обязателен" });
+        }
+
+        const order = await Order.create({
+            userId: req.user.id, // из authMiddleware
+            courseId,
+        });
+
+        res.status(201).json(order);
+    } catch (error) {
+        console.error("CREATE ORDER ERROR:", error);
+        res.status(500).json({ message: "Ошибка при создании заказа" });
+    }
+});
 
 router.patch("/:id/pay", authMiddleware, checkAdmin, async (req, res) => {
     const order = await Order.findById(req.params.id);
