@@ -9,7 +9,8 @@ const router = express.Router();
 
 router.get("/me", authMiddleware, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id); // req.user приходит из authMiddleware
+        const user = await User.findById(req.user.id)
+            .populate("courses"); // req.user приходит из authMiddleware
         if (!user) return res.status(404).json({ message: "Пользователь не найден" });
         console.log("USER FROM DB:", user); // 👈 СМОТРИ СЮДА
 
@@ -21,6 +22,7 @@ router.get("/me", authMiddleware, async (req, res) => {
             email: user.email,
             role: user.role,       // добавляем
             balance: user.balance,
+            courses: user.courses,
         });
         console.log("REQ.USER:", req.user);
 

@@ -10,6 +10,7 @@ import {adminOnly} from "../middleware/adminOnly.js";
 import {checkAdminAuth} from "../middleware/ChechAuthAdmin.js"
 import { Role } from "../models/Role.js";
 import {authAdminMiddleware} from "../middleware/authAdminMiddleware.js";
+import Order from "../models/Order.js";
 
 const router = express.Router();
 
@@ -127,5 +128,21 @@ router.post("/add-balance", async (req, res) => {
 
     res.json({ message: "Balance updated", balance: user.balance });
 });
+
+
+router.patch("/:id/pay", async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Заказ не найден" });
+
+    order.status = "paid";
+    await order.save();
+
+    await User.findByIdAndUpdate(order.userId, {
+        $addToSet: { purchasedCourses: order.courseId },
+    });
+
+    res.json({ message: "Оплата подтверждена" });
+});
+
 
 export default router;
