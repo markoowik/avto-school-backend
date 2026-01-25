@@ -1,5 +1,7 @@
 import express from "express";
 import Course from "../models/Course.js";
+import {getMyOrders} from "../controllers/order.controller.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -54,5 +56,7 @@ router.post("/buy", async (req, res) => {
 
     res.json({ message: "Course purchased" });
 });
+
+router.get("/my-orders", authMiddleware, getMyOrders);
 
 export default router;

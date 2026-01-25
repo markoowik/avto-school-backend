@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema({
         enum: ["student", "admin"],
         default: "student",
     },
+    telegramId: {
+        type: Number,
+        default: null,
+    }
 });
 
 export default mongoose.model("User", userSchema);

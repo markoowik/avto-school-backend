@@ -2,7 +2,8 @@ import express from 'express';
 import User from "./../models/User.js"
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
-import authMiddleware from "../middleware/authMiddleware.js";
+import authMiddleware from "../middleware/authMiddleware.js"
+import {saveTelegramId} from "../controllers/user.controller.js";
 
 const router = express.Router();
 
@@ -64,6 +65,7 @@ router.post("/login", async (req, res) => {
     res.json({ token });
 });
 
+router.post("/bind-telegram", saveTelegramId);
 
 
 export default router;

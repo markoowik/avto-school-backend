@@ -12,7 +12,8 @@ import authRoutes from "./src/routes/auth.js";
 import courseRoutes from "./src/routes/courseRoutes.js";
 import applicationRoutes from "./src/routes/applicationRoutes.js";
 import newsRoutes from "./src/routes/newsRoutes.js"
-import orderRoutes from "./src/routes/orders.js";
+import orderRoutes from "./src/routes/orders.js"
+import {getMyOrders} from "./src/controllers/order.controller.js";
 
 import adminRoutes from "./src/routes/admin.js"
 
@@ -39,6 +40,7 @@ app.use("/api/news", newsRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/admin", adminRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("api/my-orders", getMyOrders);
 
 
 

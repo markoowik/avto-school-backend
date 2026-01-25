@@ -63,10 +63,6 @@ router.patch("/:id/pay", authMiddleware, async (req, res) => {
     order.status = "paid";
     await order.save();
 
-    await User.findByIdAndUpdate(order.userId, {
-        $addToSet: { courses: order.courseId },
-    });
-
-    res.json({ message: "Оплата подтверждена" });
+    res.json({ message: "Оплата подтверждена, доступ открыт" });
 });
 export default router;

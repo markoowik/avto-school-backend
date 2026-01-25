@@ -28,6 +28,11 @@ const courseSchema = new mongoose.Schema(
             type: Boolean,
             default: true,
         },
+        slug: {
+            type: String,
+            enum: ["easy", "economy", "standard"],
+            required: true,
+        }
     },
     { timestamps: true }
 );
