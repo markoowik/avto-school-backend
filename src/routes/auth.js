@@ -1,71 +1,80 @@
-import express from 'express';
-import User from "./../models/User.js"
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken';
-import authMiddleware from "../middleware/authMiddleware.js"
-import {saveTelegramId} from "../controllers/user.controller.js";
+import express from "express";
+import User from "./../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import authMiddleware from "../middleware/authMiddleware.js";
+import { saveTelegramId } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
-
 router.get("/me", authMiddleware, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id)
-            .populate("courses"); // req.user приходит из authMiddleware
-        if (!user) return res.status(404).json({ message: "Пользователь не найден" });
-        console.log("USER FROM DB:", user); // 👈 СМОТРИ СЮДА
+  try {
+    const user = await User.findById(req.user.id).populate(
+      "courses",
+      "title slug",
+    ); // req.user приходит из authMiddleware
+    if (!user)
+      return res.status(404).json({ message: "Пользователь не найден" });
+    console.log("USER FROM DB:", user); // 👈 СМОТРИ СЮДА
 
-        // Вот сюда вставляем
-        res.json({
-            _id: user._id,
-            username: user.username,
-            surname: user.surname, // имя и фамилия остаются
-            email: user.email,
-            role: user.role,       // добавляем
-            balance: user.balance,
-            courses: user.courses,
-        });
-        console.log("REQ.USER:", req.user);
-
-    } catch (err) {
-        res.status(500).json({ message: "Ошибка сервера" });
-    }
+    // Вот сюда вставляем
+    res.json({
+      _id: user._id,
+      username: user.username,
+      surname: user.surname, // имя и фамилия остаются
+      email: user.email,
+      role: user.role, // добавляем
+      balance: user.balance,
+      courses: user.courses,
+    });
+    console.log("REQ.USER:", req.user);
+  } catch (err) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
 });
 
 router.post("/register", async (req, res) => {
-    const {username, surname, email, password} = req.body;
+  const { username, surname, email, password } = req.body;
 
-    const candidate = await User.findOne({ email });
-    if (candidate) return res.status(400).json({ message: "Пользователь с таким email уже существует"});
+  const candidate = await User.findOne({ email });
+  if (candidate)
+    return res
+      .status(400)
+      .json({ message: "Пользователь с таким email уже существует" });
 
-    const hash = await bcrypt.hash(password, 10);
-    const user = new User({ username, surname, email, password: hash, role: "student" });
+  const hash = await bcrypt.hash(password, 10);
+  const user = new User({
+    username,
+    surname,
+    email,
+    password: hash,
+    role: "student",
+  });
 
-    await user.save();
-    res.json({ message: "User created successfully" });
+  await user.save();
+  res.json({ message: "User created successfully" });
 });
 
 router.post("/login", async (req, res) => {
-    const {email, password} = req.body;
+  const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "User not found" });
+  const user = await User.findOne({ email });
+  if (!user) return res.status(400).json({ message: "User not found" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Wrong password" });
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) return res.status(400).json({ message: "Wrong password" });
 
-    const token = jwt.sign(
-        {
-            id: user._id,
-            role: user.role,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" }
-    );
-    res.json({ token });
+  const token = jwt.sign(
+    {
+      id: user._id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" },
+  );
+  res.json({ token });
 });
 
 router.post("/bind-telegram", saveTelegramId);
-
 
 export default router;
