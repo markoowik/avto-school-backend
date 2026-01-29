@@ -47,6 +47,7 @@ router.post("/create-order", authMiddleware, async (req, res) => {
     const order = await Order.create({
       userId: req.user.id, // из authMiddleware
       courseId,
+      status: "pending",
     });
 
     res.status(201).json(order);
