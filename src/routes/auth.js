@@ -9,10 +9,9 @@ const router = express.Router();
 
 router.get("/me", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate(
-      "courses",
-      "title slug",
-    ); // req.user приходит из authMiddleware
+    const user = await User.findById(req.user.id)
+      .select("-password")
+      .populate("courses", "title slug"); // req.user приходит из authMiddleware
     if (!user)
       return res.status(404).json({ message: "Пользователь не найден" });
     console.log("USER FROM DB:", user); // 👈 СМОТРИ СЮДА
