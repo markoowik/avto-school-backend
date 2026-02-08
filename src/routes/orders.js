@@ -17,7 +17,7 @@ const checkAdmin = (req, res, next) => {
 router.get("/", authMiddleware, async (req, res) => {
   const orders = await Order.find()
     .populate("userId", "name surname email")
-    .populate("courseId", "title price")
+    .populate("courseId", "title price slug")
     .sort({ createdAt: -1 });
 
   res.json(orders);
