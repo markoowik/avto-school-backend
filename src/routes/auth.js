@@ -3,6 +3,7 @@ import User from "./../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { serviceAuth } from "../middleware/serviceAuth.js";
 import { saveTelegramId } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -74,6 +75,18 @@ router.post("/login", async (req, res) => {
   res.json({ token });
 });
 
-router.post("/bind-telegram", saveTelegramId);
+router.post("/bind-telegram", saveTelegramId, serviceAuth);
+
+router.get("/by-telegram/:telegramId", async (req, res) => {
+  const user = await User.findOne({
+    telegramId: req.params.telegramId,
+  }).populate("courses", "title slug");
+
+  if (!user) {
+    return res.status(404).json({ courses: [] });
+  }
+
+  res.json({ courses: user.courses });
+});
 
 export default router;
