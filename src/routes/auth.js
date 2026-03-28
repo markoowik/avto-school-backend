@@ -8,6 +8,15 @@ import { saveTelegramId } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find().select("-password"); // без пароля
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
 router.get("/me", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
