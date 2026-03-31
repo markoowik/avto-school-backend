@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     sparse: true,
     default: null,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export default mongoose.model("User", userSchema);

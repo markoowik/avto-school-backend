@@ -35,6 +35,7 @@ router.get("/me", authMiddleware, async (req, res) => {
       role: user.role, // добавляем
       balance: user.balance,
       courses: user.courses,
+      createdAt: user.createdAt,
     });
     console.log("REQ.USER:", req.user);
   } catch (err) {
