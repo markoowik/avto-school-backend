@@ -44,25 +44,41 @@ router.get("/me", authMiddleware, async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { username, surname, email, password } = req.body;
+  try {
+    const { username, surname, email, password } = req.body;
 
-  const candidate = await User.findOne({ email });
-  if (candidate)
-    return res
-      .status(400)
-      .json({ message: "Пользователь с таким email уже существует" });
+    const candidate = await User.findOne({ email });
+    if (candidate) {
+      return res.status(400).json({
+        message: "Пользователь с таким email уже существует",
+      });
+    }
 
-  const hash = await bcrypt.hash(password, 10);
-  const user = new User({
-    username,
-    surname,
-    email,
-    password: hash,
-    role: "student",
-  });
+    const hash = await bcrypt.hash(password, 10);
 
-  await user.save();
-  res.json({ message: "User created successfully" });
+    const user = new User({
+      username,
+      surname,
+      email,
+      password: hash,
+      role: "student",
+    });
+
+    await user.save();
+
+    res.json({ message: "User created successfully" });
+  } catch (err) {
+    console.error("REGISTER ERROR:", err);
+
+    // 🔥 ВАЖНО: обработка duplicate key
+    if (err.code === 11000) {
+      return res.status(400).json({
+        message: "Email уже используется",
+      });
+    }
+
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
 });
 
 router.post("/login", async (req, res) => {
