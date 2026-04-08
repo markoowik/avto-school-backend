@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: "backend/.env" });
 
 import express from "express";
 import mongoose from "mongoose";
@@ -26,6 +26,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+console.log("MONGO:", process.env.MONGODB_URI);
 
 mongoose
   .connect(process.env.MONGODB_URI)
