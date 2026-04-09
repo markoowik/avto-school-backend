@@ -19,12 +19,18 @@ router.post("/create-coruse", async (req, res) => {
   try {
     const { title, description, features, price, category } = req.body;
 
+    const slug = title
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "");
+
     const course = new Course({
       title,
       description,
       features,
       price,
       category,
+      slug,
     });
 
     await course.save();
