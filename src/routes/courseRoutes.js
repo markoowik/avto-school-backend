@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/create-coruse", async (req, res) => {
   try {
     const { title, description, features, price, category } = req.body;
 
