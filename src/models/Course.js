@@ -1,40 +1,46 @@
 import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema(
-    {
-        category: {
-            type: String,
-            required: true, // A, B, C
-        },
-        title: {
-            type: String,
-            required: true,
-        },
-        description: {
-            type: String,
-        },
-        features: {
-            type:[String],
-            default: [],
-        },
-        price: {
-            type: Number,
-            required: true,
-        },
-        vehicleType: {
-            type: String, // авто, мотоцикл, грузовик
-        },
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
-        slug: {
-            type: String,
-            enum: ["easy", "economy", "standard"],
-            required: true,
-        }
+  {
+    category: {
+      type: String,
+      required: true, // A, B, C
     },
-    { timestamps: true }
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    features: {
+      type: [String],
+      default: [],
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    vehicleType: {
+      type: String, // авто, мотоцикл, грузовик
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    plan: {
+      type: String,
+      enum: ["easy", "economy", "standard"],
+      required: true,
+    },
+  },
+  { timestamps: true },
 );
 
 export default mongoose.model("Course", courseSchema);

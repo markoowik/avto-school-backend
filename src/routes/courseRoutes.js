@@ -17,12 +17,14 @@ router.get("/", async (req, res) => {
 
 router.post("/create-course", async (req, res) => {
   try {
-    const { title, description, features, price, category } = req.body;
+    const { title, description, features, price, category, plan } = req.body;
 
     const slug = title
       .toLowerCase()
+      .trim()
       .replace(/\s+/g, "-")
-      .replace(/[^\w-]+/g, "");
+      .replace(/[^a-z0-9-]/g, "")
+      .replace(/-+/g, "-");
 
     const course = new Course({
       title,
@@ -31,6 +33,7 @@ router.post("/create-course", async (req, res) => {
       price,
       category,
       slug,
+      plan,
     });
 
     await course.save();
