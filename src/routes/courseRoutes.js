@@ -1,60 +1,60 @@
 import express from "express";
 import Course from "../models/Course.js";
-import {getMyOrders} from "../controllers/order.controller.js";
+import { getMyOrders } from "../controllers/order.controller.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // получить все курсы
 router.get("/", async (req, res) => {
-    try {
-        const courses = await Course.find({ isActive: true });
-        res.json(courses);
-    } catch (e) {
-        res.status(500).json({ message: "Ошибка сервера" });
-    }
+  try {
+    const courses = await Course.find({ isActive: true });
+    res.json(courses);
+  } catch (e) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
 });
 
 router.post("/", async (req, res) => {
-    try {
-        const { title, description,features, price, category } = req.body;
+  try {
+    const { title, description, features, price, category } = req.body;
 
-        const course = new Course({
-            title,
-            description,
-            features,
-            price,
-            category,
-        });
+    const course = new Course({
+      title,
+      description,
+      features,
+      price,
+      category,
+    });
 
-        await course.save();
+    await course.save();
 
-        res.status(201).json(course);
-    } catch (e) {
-        res.status(500).json({ message: "Ошибка при создании курса" });
-    }
+    res.status(201).json(course);
+  } catch (e) {
+    console.log(e); // ВАЖНО
+    res.status(500).json({ message: e.message });
+  }
 });
 
 router.post("/buy", async (req, res) => {
-    const { userId, courseId } = req.body;
+  const { userId, courseId } = req.body;
 
-    const user = await User.findById(userId);
-    const course = await Course.findById(courseId);
+  const user = await User.findById(userId);
+  const course = await Course.findById(courseId);
 
-    if (!user || !course)
-        return res.status(404).json({ message: "Not found" });
+  if (!user || !course) return res.status(404).json({ message: "Not found" });
 
-    if (user.balance < course.price)
-        return res.status(400).json({ message: "Not enough balance" });
+  if (user.balance < course.price)
+    return res.status(400).json({ message: "Not enough balance" });
 
-    if (user.courses.includes(courseId))
-        return res.status(400).json({ message: "Already bought" });
+  if (user.courses.includes(courseId))
+    return res.status(400).json({ message: "Already bought" });
 
-    user.balance -= course.price;
-    user.courses.push(course._id);
-    await user.save();
+  user.balance -= course.price;
+  user.courses.push(course._id);
+  await user.save();
 
-    res.json({ message: "Course purchased" });
+  res.json({ message: "Course purchased" });
 });
 
 router.get("/my-orders", authMiddleware, getMyOrders);
