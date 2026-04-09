@@ -23,7 +23,7 @@ router.post("/create-course", async (req, res) => {
       .toLowerCase()
       .trim()
       .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "")
+      .replace(/[^a-z0-9а-яё-]/g, "") // ✅ добавили кириллицу
       .replace(/-+/g, "-");
 
     const course = new Course({
@@ -37,6 +37,7 @@ router.post("/create-course", async (req, res) => {
     });
 
     await course.save();
+    console.log(req.body);
 
     res.status(201).json(course);
   } catch (e) {
