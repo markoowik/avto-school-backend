@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/create-coruse", async (req, res) => {
+router.post("/create-course", async (req, res) => {
   try {
     const { title, description, features, price, category } = req.body;
 
