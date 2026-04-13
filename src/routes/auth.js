@@ -54,11 +54,11 @@ router.get("/me", authMiddleware, async (req, res) => {
 
 router.post("/register", async (req, res) => {
   try {
-    const { username, surname, email, password } = req.body;
+    let { username, surname, email, password } = req.body;
 
-    const emailNormalized = email.toLowerCase().trim();
+    email = email.toLowerCase().trim();
 
-    const candidate = await User.findOne({ email: emailNormalized });
+    const candidate = await User.findOne({ email });
     if (candidate) {
       return res.status(400).json({
         message: "Пользователь с таким email уже существует",
@@ -70,7 +70,7 @@ router.post("/register", async (req, res) => {
     const user = new User({
       username,
       surname,
-      email: emailNormalized,
+      email,
       password: hash,
       role: "student",
     });
@@ -81,7 +81,6 @@ router.post("/register", async (req, res) => {
   } catch (err) {
     console.error("REGISTER ERROR:", err);
 
-    // 🔥 ВАЖНО: обработка duplicate key
     if (err.code === 11000) {
       return res.status(400).json({
         message: "Email уже используется",
