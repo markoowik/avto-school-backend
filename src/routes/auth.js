@@ -76,8 +76,19 @@ router.post("/register", async (req, res) => {
     });
 
     await user.save();
+    console.log("BODY:", req.body);
+    console.log("EMAIL AFTER FORMAT:", email);
 
-    res.json({ message: "User created successfully" });
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    res.json({ token });
   } catch (err) {
     console.error("REGISTER ERROR:", err);
 
