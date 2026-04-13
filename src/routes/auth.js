@@ -56,7 +56,9 @@ router.post("/register", async (req, res) => {
   try {
     const { username, surname, email, password } = req.body;
 
-    const candidate = await User.findOne({ email });
+    const emailNormalized = email.toLowerCase().trim();
+
+    const candidate = await User.findOne({ email: emailNormalized });
     if (candidate) {
       return res.status(400).json({
         message: "Пользователь с таким email уже существует",
@@ -68,7 +70,7 @@ router.post("/register", async (req, res) => {
     const user = new User({
       username,
       surname,
-      email,
+      email: emailNormalized,
       password: hash,
       role: "student",
     });
