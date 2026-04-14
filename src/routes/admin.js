@@ -128,19 +128,23 @@ router.post("/add-balance", async (req, res) => {
 
   res.json({ message: "Balance updated", balance: user.balance });
 });
-router.delete("/delete-user/:id", authMiddleware, async (req, res, next) => {
-  try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
+router.delete(
+  "/delete-user/:id",
+  authAdminMiddleware,
+  async (req, res, next) => {
+    try {
+      const deletedUser = await User.findByIdAndDelete(req.params.id);
 
-    if (!deletedUser) {
-      return res.status(404).json({ message: "Пользователь не найден" });
+      if (!deletedUser) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+
+      res.json(deletedUser);
+    } catch (err) {
+      next(err);
     }
-
-    res.json(deletedUser);
-  } catch (err) {
-    next(err);
-  }
-});
+  },
+);
 
 // router.patch("/:id/pay", async (req, res) => {
 //     const order = await Order.findById(req.params.id);
