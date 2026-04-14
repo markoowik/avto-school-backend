@@ -130,7 +130,7 @@ router.post("/add-balance", async (req, res) => {
 });
 router.delete(
   "/delete-user/:id",
-  authAdminMiddleware,
+  authAdminMiddleware(),
   async (req, res, next) => {
     try {
       const deletedUser = await User.findByIdAndDelete(req.params.id);
