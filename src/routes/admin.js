@@ -139,6 +139,12 @@ router.delete(
         return res.status(404).json({ message: "Пользователь не найден" });
       }
 
+      if (user.role === "admin") {
+        return res.status(403).json({
+          message: "Вы не можете забанить администратора",
+        });
+      }
+
       res.json(deletedUser);
     } catch (err) {
       next(err);

@@ -65,6 +65,12 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    if (!username || !surname || !email || !password) {
+      return res.status(400).json({
+        message: "Заполните все поля",
+      });
+    }
+
     const hash = await bcrypt.hash(password, 10);
 
     const user = new User({
