@@ -56,18 +56,19 @@ router.post("/register", async (req, res) => {
   try {
     let { username, surname, email, password } = req.body;
 
-    email = email.toLowerCase().trim();
-
-    const candidate = await User.findOne({ email });
-    if (candidate) {
-      return res.status(400).json({
-        message: "Пользователь с таким email уже существует",
-      });
-    }
-
     if (!username || !surname || !email || !password) {
       return res.status(400).json({
         message: "Заполните все поля",
+      });
+    }
+
+    email = email.toLowerCase().trim();
+
+    const candidate = await User.findOne({ email });
+
+    if (candidate) {
+      return res.status(400).json({
+        message: "Пользователь с таким email уже существует",
       });
     }
 
@@ -82,8 +83,6 @@ router.post("/register", async (req, res) => {
     });
 
     await user.save();
-    console.log("BODY:", req.body);
-    console.log("EMAIL AFTER FORMAT:", email);
 
     const token = jwt.sign(
       {
@@ -104,7 +103,9 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    res.status(500).json({ message: "Ошибка сервера" });
+    res.status(500).json({
+      message: err.message,
+    });
   }
 });
 
