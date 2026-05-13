@@ -56,6 +56,9 @@ router.post("/register", async (req, res) => {
   try {
     let { username, surname, email, password } = req.body;
 
+    console.log("BODY:", req.body);
+    console.log("MONGO URI:", process.env.MONGO_URI);
+
     if (!username || !surname || !email || !password) {
       return res.status(400).json({
         message: "Заполните все поля",
@@ -64,7 +67,11 @@ router.post("/register", async (req, res) => {
 
     email = email.toLowerCase().trim();
 
+    console.log("EMAIL:", email);
+
     const candidate = await User.findOne({ email });
+
+    console.log("CANDIDATE:", candidate);
 
     if (candidate) {
       return res.status(400).json({
@@ -96,12 +103,6 @@ router.post("/register", async (req, res) => {
     res.json({ token });
   } catch (err) {
     console.error("REGISTER ERROR:", err);
-
-    if (err.code === 11000) {
-      return res.status(400).json({
-        message: "Email уже используется",
-      });
-    }
 
     res.status(500).json({
       message: err.message,
